@@ -17,6 +17,7 @@ public class PlayCover: NSObject {
         PlayScreen.shared.initialize()
         PlayInput.shared.initialize()
         DiscordIPC.shared.initialize()
+        WebSocketManager.shared.initialize()
 
         if PlaySettings.shared.rootWorkDir {
             // Change the working directory to / just like iOS
