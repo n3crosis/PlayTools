@@ -3,6 +3,21 @@ import UIKit
 
 let settings = PlaySettings.shared
 
+func playCoverUserHomeDirectoryPath() -> String {
+    let userName = NSUserName()
+    if let homeDirectory = NSHomeDirectoryForUser(userName) {
+        return homeDirectory
+    }
+    return NSString(string: "~\(userName)").expandingTildeInPath
+}
+
+func playCoverContainerBaseURL() -> URL {
+    URL(fileURLWithPath: playCoverUserHomeDirectoryPath(), isDirectory: true)
+        .appendingPathComponent("Library", isDirectory: true)
+        .appendingPathComponent("Containers", isDirectory: true)
+        .appendingPathComponent("io.playcover.PlayCover", isDirectory: true)
+}
+
 @objc public final class PlaySettings: NSObject {
     @objc public static let shared = PlaySettings()
 
@@ -11,7 +26,7 @@ let settings = PlaySettings.shared
     var settingsData: AppSettingsData
 
     override init() {
-        settingsUrl = URL(fileURLWithPath: "/Users/\(NSUserName())/Library/Containers/io.playcover.PlayCover")
+        settingsUrl = playCoverContainerBaseURL()
             .appendingPathComponent("App Settings")
             .appendingPathComponent("\(bundleIdentifier).plist")
         do {
@@ -88,11 +103,17 @@ let settings = PlaySettings.shared
 
     @objc lazy var floatingWindow = settingsData.floatingWindow
 
+    @objc lazy var displayRotation = settingsData.displayRotation
+
     @objc lazy var checkMicPermissionSync = settingsData.checkMicPermissionSync
 
     @objc lazy var limitMotionUpdateFrequency = settingsData.limitMotionUpdateFrequency
 
     @objc lazy var disableBuiltinMouse = settingsData.disableBuiltinMouse
+
+    @objc lazy var blockSleepSpamming = settingsData.blockSleepSpamming
+
+    @objc lazy var ignoreUnityKeyboardInitializationError = settingsData.ignoreUnityKeyboardInitializationError
 }
 
 struct AppSettingsData: Codable {
@@ -106,6 +127,7 @@ struct AppSettingsData: Codable {
     var customScaler = 2.0
     var resolution = 2
     var aspectRatio = 1
+    var displayRotation = 0
     var notch = false
     var bypass = false
     var discordActivity = DiscordActivity()
@@ -125,4 +147,6 @@ struct AppSettingsData: Codable {
     var resizableAspectRatioType = 0
     var resizableAspectRatioWidth = 0
     var resizableAspectRatioHeight = 0
+    var blockSleepSpamming = false
+    var ignoreUnityKeyboardInitializationError = false
 }
